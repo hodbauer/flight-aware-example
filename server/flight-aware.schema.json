@@ -1,0 +1,2784 @@
+{
+  "operations": [
+    {
+      "name": "AircraftType",
+      "description": "Given an aircraft type string such as GALX, <b>AircraftType</b> returns information about that type, comprising the manufacturer (for instance, \"IAI\"), type (for instance, \"Gulfstream G200\"), and description (like \"twin-jet\").",
+      "inputs": [
+        {
+          "name": "type",
+          "type": "string",
+          "comment": "aircraft type ID"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "AircraftTypeStruct"
+      }
+    },
+    {
+      "name": "AirlineFlightSchedules",
+      "description": "<p><b>AirlineFlightSchedules</b> returns flight schedules that have been published by airlines.  These schedules are available for the recent past as well as up to one year into the future.\tFlights performed by airline codeshares are also returned by default in these results but can be excluded.  If availabe the FlightAware flight id will be returned.</p>",
+      "inputs": [
+        {
+          "name": "start_date",
+          "type": "int",
+          "comment": "Timestamp of earliest flight departure to return, specified in integer seconds since 1970 (UNIX epoch time). Use UTC/GMT to convert the local time at the departure airport to this timestamp."
+        },
+        {
+          "name": "end_date",
+          "type": "int",
+          "comment": "Timestamp of latest flight departure to return, specified in integer seconds since 1970 (UNIX epoch time). Use UTC/GMT to convert the local time at the departure airport to this timestamp."
+        },
+        {
+          "name": "origin",
+          "type": "string?",
+          "comment": "Optional airport code of origin.  If blank or unspecified, then flights with any origin will be returned."
+        },
+        {
+          "name": "destination",
+          "type": "string?",
+          "comment": "Optional airport code of destination.  If blank or unspecified, then flights with any destination will be returned."
+        },
+        {
+          "name": "airline",
+          "type": "string?",
+          "comment": "Optional airline code of the carrier.  If blank or unspecified, then flights on any airline will be returned."
+        },
+        {
+          "name": "flightno",
+          "type": "string?",
+          "comment": "Optional flight number. If blank or unspecified, then any flight number will be returned."
+        },
+        {
+          "name": "exclude_codeshare",
+          "type": "boolean?",
+          "comment": "Optional flag to include codeshare flights.  Defaults to false."
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of past records to obtain. Must be a positive integer value. Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (most recent report)."
+        }
+      ],
+      "returns": {
+        "comment": "Additional information about the airline flight",
+        "type": "ArrayOfAirlineFlightScheduleStruct"
+      }
+    },
+    {
+      "name": "AirlineInfo",
+      "description": "<b>AirlineInfo</b> returns information about a commercial airline/carrier given an ICAO airline code.",
+      "inputs": [
+        {
+          "name": "airline_code",
+          "type": "string",
+          "comment": "the ICAO airline ID (e.g., COA, ASA, UAL, etc.)"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "AirlineInfoStruct"
+      }
+    },
+    {
+      "name": "AirportBoards",
+      "description": "<p><b>AirportBoards</b> returns the flights scheduled, departing, enroute, and arriving at a specified airport.</p>",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string",
+          "comment": "airport code"
+        },
+        {
+          "name": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "name": "filter",
+          "type": "string?",
+          "comment": "Optional.  Specify \"ga\" to show only general aviation traffic, \"airline\" to only show airline traffic.  If null/void then all types are returned.  You can also limit results to a particular airline by specifying \"airline:airlineCode\" where the airlineCode is the ICAO identifier for that airline."
+        },
+        {
+          "name": "type",
+          "type": "string?",
+          "comment": "Select one of \"arrivals\", \"departures\", \"enroute\", \"scheduled\", or \"all\". Defaults to all"
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional.  Number of flights to fetch, per type.  Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional.  Offset for query.  Defaults to 0."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "AirportBoardsStruct"
+      }
+    },
+    {
+      "name": "AirportDelays",
+      "description": "<p><b>AirportDelays</b> retrieves a list of airport-wide delays at a specific airport or at all airports.  There may be multiple reasons returned if there are multiple types of delays reported at an airport.  Note that individual flights can be delayed without there being an airport-wide delay that this function reports.</p>\n<p>The \"delay_secs\" member should not be displayed to the user anywhere.  It is intended only for sorting/ordering purposes.</p>\n<p>The \"category\" member will be one of the following codes: weather, traffic, volume, runway, equipment, accident, security, general, unknown, other.</p>\n",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string?",
+          "comment": "Optional airport to retrieve delays for.  if blank then delays for all airports will be returned"
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return.  Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ],
+      "returns": {
+        "comment": "airport-wide delays",
+        "type": "AirportDelayStruct"
+      }
+    },
+    {
+      "name": "AirportInfo",
+      "description": "<p><b>AirportInfo</b> returns information about an airport given an airport code such as KLAX, KSFO, KORD, KIAH, O07, etc.  Data returned includes name (Houston Intercontinental Airport), location (typically city, state and country code), latitude and longitude, timezone (:America/Chicago), elevation.</p><p>The returned timezone is specified in a format that is compatible with the <a href=\"http://en.wikipedia.org/wiki/Tz_database\">official IANA zoneinfo database</a> and can be used to convert the timestamps returned by all other functions into localtimes.  Support for timestamp conversion using zoneinfo identifiers is available natively or through third-party libraries for most programming languages.  In some cases, the leading colon (\":\") character may need to be removed from the timezone identifier in order for it to be recognized by some timezone libraries.</p>",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "AirportStruct"
+      }
+    },
+    {
+      "name": "BlockIdentCheck",
+      "description": "Given an aircraft identification, returns 1 if the aircraft is blocked from public tracking, 0 if it is not.",
+      "inputs": [
+        {
+          "name": "ident",
+          "type": "string",
+          "comment": "requested tail number"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "int"
+      }
+    },
+    {
+      "name": "CountAirportOperations",
+      "description": "Given an airport, <b>CountAirportOperations</b> returns the number of aircraft scheduled, en route or departing the airport.  Scheduled arrivals are non-airborne flights that are scheduled to fly to the airport in question.",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "CountAirportOperationsStruct"
+      }
+    },
+    {
+      "name": "CountAllEnrouteAirlineOperations",
+      "description": "<p><b>CountAllEnrouteAirlineOperations</b> returns an array of airlines and how many flights each currently has enroute.</p>",
+      "inputs": [],
+      "returns": {
+        "comment": "returned results",
+        "type": "ArrayOfCountAirlineOperationsStruct"
+      }
+    },
+    {
+      "name": "DecodeFlightRoute",
+      "description": "<p>Given a flight identifier (faFlightID) of a past, current, or future flight, <b>DecodeFlightRoute</b> returns a \"cracked\" list of noteworthy navigation points along the planned flight route.  The list represents the originally planned route of travel, which may differ slightly from the actual flight path flown.  The returned list will include the name, type, latitude, longitude, distance from origin, distance from destination, distance this leg and outbound course of each point if available.  Additional reporting points along the route may be automatically included in the returned list.  Not all flight routes can be successfully decoded by this function, particularly if the flight is not entirely within the continental U.S. airspace, since this function only has access to navaids within that area.  If data on a waypoint is missing then the type will be listed as \"UNKNOWN\".  To obtain the faFlightID, you can use a function such as <a href=\"#op_GetFlightID\">GetFlightID</a>, <a href=\"#op_FlightInfoEx\">FlightInfoEx</a>, or <a href=\"#op_InFlightInfo\">InFlightInfo</a>.</p>\n<p>For an alternate version of this function that lets you specify the route, see <a href=\"#op_DecodeRoute\">DecodeRoute</a>.</p>",
+      "inputs": [
+        {
+          "name": "faFlightID",
+          "type": "string",
+          "comment": "unique identifier assigned by FlightAware for the desired flight (or use \"ident@departureTime\")"
+        }
+      ],
+      "returns": {
+        "comment": "returned list of route points",
+        "type": "ArrayOfFlightRouteStruct"
+      }
+    },
+    {
+      "name": "DecodeRoute",
+      "description": "<p>Given an origin airport, destination airport, and a route between them, <b>DecodeRoute</b> returns a \"cracked\" list of noteworthy navigation points along the planned flight route.  The list represents the originally planned route of travel, which may differ slightly from the actual flight path flown.  The returned list will include the name, type, latitude, longitude, distance from origin, distance from destination, distance this leg and outbound course of each point if available.  Additional reporting points along the route may be automatically included in the returned list.  Not all flight routes can be successfully decoded by this function, particularly if the flight is not entirely within the continental U.S. airspace, since this function only has access to navaids within that area.  If data on a waypoint is missing then the type will be listed as \"UNKNOWN\". </p>\n<p>For an alternate version of this function that lets you specify an existing flight identifier, see <a href=\"#op_DecodeFlightRoute\">DecodeFlightRoute</a>.</p>",
+      "inputs": [
+        {
+          "name": "origin",
+          "type": "string",
+          "comment": "Origin airport code"
+        },
+        {
+          "name": "route",
+          "type": "string",
+          "comment": "Space separated list of intersections and/or VORs along the route (e.g. WYLSN MONNT KLJOY MAJKK REDDN4)"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "comment": "Destination airport code"
+        }
+      ],
+      "returns": {
+        "comment": "returned list of route points",
+        "type": "ArrayOfFlightRouteStruct"
+      }
+    },
+    {
+      "name": "FindFlight",
+      "description": "<p><b>FindFlight</b> returns matching flights based on an origin/destination pair.  The returned results may include non-stop or one-stop flights.</p>",
+      "inputs": [
+        {
+          "name": "origin",
+          "type": "string",
+          "comment": "Airport of origin"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "comment": "Airport of destination"
+        },
+        {
+          "name": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "name": "type",
+          "type": "string?",
+          "comment": "Optional type of search (auto, nonstop, onestop). Default is auto."
+        },
+        {
+          "name": "filter",
+          "type": "string?",
+          "comment": "Optional filter restrictions (all, ga, airline). Default is all."
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of results to return.  Must be a positive integer. Default is 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "FindFlightStruct"
+      }
+    },
+    {
+      "name": "FlightCancellationStatistics",
+      "description": "<p><b>FlightCancellationStatistics</b> fetches statistics about how many flights have been cancelled on the specified day, and aggregated by the specified breakdown criteria.  Currently supported criteria include the operating airline, the origin airport, or the destination airport.</p>\n",
+      "inputs": [
+        {
+          "name": "time_period",
+          "type": "string",
+          "comment": "specifies which day to analyze.  (must be 'yesterday', 'today', 'tomorrow', 'plus2days', 'twoDaysAgo', 'minus2plus12hrs', 'next36hrs', 'week')"
+        },
+        {
+          "name": "type_matching",
+          "type": "string",
+          "comment": "the aggregation criteria.  (must be 'airline', 'origin', or 'destination')"
+        },
+        {
+          "name": "ident_filter",
+          "type": "string?",
+          "comment": "this argument can be blank/unspecified to request that all results are returned.  Otherwise, when type_matching is 'airline', this argument can be the specific airline you are interested in.  When type_matching is 'origin' or 'destination', this argument can be the specific airport you are interested in."
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return, ordered by highest to lowest. Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ],
+      "returns": {
+        "comment": "returned list of cancelled flight statistics",
+        "type": "CancellationSummaryStruct"
+      }
+    },
+    {
+      "name": "FlightInfoStatus",
+      "description": "<p><b>FlightInfoStatus</b> returns information about flights for a specific tail number (e.g., <strong>N12345</strong>), or an ident (typically an ICAO airline with flight number, e.g., <strong>SWA2558</strong>), or a FlightAware-assigned unique flight identifier (e.g. faFlightID returned by another FlightXML function).\t When a tail number or ident is specified and multiple flights are available, the results will be returned from newest to oldest.  The oldest flights searched by this function are about 2 weeks in the past.\tCodeshares and alternate idents are automatically searched.\t When a FlightAware-assigned unique flight identifier is supplied, at most a single result will be returned.</p>\n\t<p>Times are provided in a nested data structure that contains the representation in several different formats, including UTC integer seconds since 1970 (UNIX epoch time), and integer seconds since 1970 relative to the local (airport) timezone.\tThe estimated time enroute (filed_ete) is given in seconds.</p>",
+      "inputs": [
+        {
+          "name": "ident",
+          "type": "string",
+          "comment": "requested tail number, ident, atc_ident, or faFlightID"
+        },
+        {
+          "name": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "name": "filter",
+          "type": "string?",
+          "comment": "Optional results filter.  This filter will be available in the future and will utilize ODate logical operators to filter results."
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of past flights to obtain. Must be a positive integer value. Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "ArrayOfFlightInfoStatusStruct"
+      }
+    },
+    {
+      "name": "GetFlightTrack",
+      "description": "<p><b>GetFlightTrack</b> looks up a flight's track log by its unique FlightAware identifier (e.g. SKW5252-1491801993-airline-0107) or flight ident and departure time (e.g. SKW5252@1492037400).  To obtain the faFlightID, you can use a function such as <a href=\"#op_FlightInfoStatus\">FlightInfoStatus</a>.  It returns the track log for that flight if it has departed.  It returns an array of positions, with each including the timestamp, longitude, latitude, groundspeed, altitude, altitudestatus, updatetype, and altitudechange.  Altitude is in hundreds of feet or Flight Level where appropriate, see <a href=\"http://flightaware.com/about/faq.rvt#flightLevel\">our FAQ about flight levels</a>.</p>\n<p>Altitude status is 'C' when the flight is more than 200 feet away from its ATC-assigned altitude.  (For example, the aircraft is transitioning to its assigned altitude.)  Altitude change is 'C' if the aircraft is climbing (compared to the previous position reported), 'D' for descending, and empty if it is level.  This happens for VFR flights with flight following, among other things.  Timestamp is integer seconds since 1970 (UNIX epoch time).</p>\n<p>Codeshares and alternate idents are automatically searched.</p>\n",
+      "inputs": [
+        {
+          "name": "ident",
+          "type": "string",
+          "comment": "requested flight id (either a FlightAware flight id (e.g. SWA35-1491974780-airline-0046) or an ident with departure time (e.g. SWA35@1492200000))"
+        },
+        {
+          "name": "include_position_estimates",
+          "type": "boolean?",
+          "comment": "Optional - false by default.  Set to true to return estimated positions in the track."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "ArrayOfTrackStruct"
+      }
+    },
+    {
+      "name": "LatLongsToDistance",
+      "description": "Given two latitudes and longitudes, lat1 lon1 lat2 and lon2, respectively, determine the great circle distance between those positions in miles.  The returned distance is rounded to the nearest whole mile.",
+      "inputs": [
+        {
+          "name": "lat1",
+          "type": "float",
+          "comment": "Latitude of point 1"
+        },
+        {
+          "name": "lon1",
+          "type": "float",
+          "comment": "Longitude of point 1"
+        },
+        {
+          "name": "lat2",
+          "type": "float",
+          "comment": "Latitude of point 2"
+        },
+        {
+          "name": "lon2",
+          "type": "float",
+          "comment": "Longitude of point 2"
+        }
+      ],
+      "returns": {
+        "comment": "returned distance",
+        "type": "int"
+      }
+    },
+    {
+      "name": "LatLongsToHeading",
+      "description": "Given two latitudes and longitudes, lat1 lon1 lat2 and lon2, respectively, calculate and return the initial compass heading (where 360 is North) from position one to position two. Quite accurate for relatively short distances but since it assumes the earth is a sphere rather than on irregular oblate sphereoid may be inaccurate for flights around a good chunk of the world, etc.",
+      "inputs": [
+        {
+          "name": "lat1",
+          "type": "float",
+          "comment": "Latitude of point 1"
+        },
+        {
+          "name": "lon1",
+          "type": "float",
+          "comment": "Longitude of point 1"
+        },
+        {
+          "name": "lat2",
+          "type": "float",
+          "comment": "Latitude of point 2"
+        },
+        {
+          "name": "lon2",
+          "type": "float",
+          "comment": "Longitude of point 2"
+        }
+      ],
+      "returns": {
+        "comment": "returned heading",
+        "type": "int"
+      }
+    },
+    {
+      "name": "NearbyAirports",
+      "description": "<p><b>NearbyAirports</b> returns a list of airports near the latitude / longitude or airport code specified within the given radius.  You must specify either a latitude/longitude OR an airport code.</p>",
+      "inputs": [
+        {
+          "name": "latitude",
+          "type": "float?",
+          "comment": "The latitude of the point to search near."
+        },
+        {
+          "name": "longitude",
+          "type": "float?",
+          "comment": "The longitude of the point to search near."
+        },
+        {
+          "name": "airport_code",
+          "type": "string?",
+          "comment": "The airport code to search near"
+        },
+        {
+          "name": "radius",
+          "type": "int",
+          "comment": "The search radius to use for finding nearby airports in statute miles."
+        },
+        {
+          "name": "only_iap",
+          "type": "boolean?",
+          "comment": "Optional. Return only airports with Instrument Approaches (also limits results to North America)"
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return. Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (closest airports)."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "NearbyAirportsStruct"
+      }
+    },
+    {
+      "name": "RoutesBetweenAirports",
+      "description": "<p><b>RoutesBetweenAirports</b> returns information about assigned IFR routings between two airports. For each known routing, the route, number of times that route has been assigned, the filed altitude (lowest and highest among found plans, measured in 100 ft intervals), and the most recent filed departure date/time are returned.  The max_file_age will only accept certain values so ensure that you conform to those requirements.",
+      "inputs": [
+        {
+          "name": "origin",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "name": "destination",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "name": "max_file_age",
+          "type": "string",
+          "comment": "maximum filed plan age of flights to consider.  Can be a value less than or equal to 14 days (2 weeks) OR 1 month OR 1 year (for example: \"6 days\" or \"1 month\" or \"1 year\").  This should generally be longer than maxDepartureAge."
+        },
+        {
+          "name": "sort_by",
+          "type": "string",
+          "comment": "Optional. Sort column for results.  Valid options are \"count\" (default) or \"last_departuretime\".  The \"count\" option will sort results by the route filing count in descening order.  The \"last_departuretime\" option will sort results by the latest filed departuretime for that route in descending order (newest first).  Any invalid value will result in sorting by count descending."
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of past flights to obtain. Must be a positive integer value less. Defaults to 15."
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "ArrayOfRoutesBetweenAirportsStruct"
+      }
+    },
+    {
+      "name": "TailOwner",
+      "description": "<b>TailOwner</b> returns information about the owner of an aircraft, given a flight number or N-number.  Data returned includes owner's name, location (typically city and state), and website, if any.  Codeshares and alternate idents are automatically searched.",
+      "inputs": [
+        {
+          "name": "ident",
+          "type": "string",
+          "comment": "requested tail number"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "TailOwnerStruct"
+      }
+    },
+    {
+      "name": "WeatherConditions",
+      "description": "<p>Given an airport, return the Weather Conditions (METAR) as parsed, human-readable, and raw formats.  To return weather for a nearby airport if the requested one is not available, then set the return_nearby_weather argument to true.  If a value greater than 1 is specified for howMany then multiple past reports will be returned, in order of increasing age.</p>",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "name": "weather_date",
+          "type": "int?",
+          "comment": "Optional. The active time for the METAR  reports (in seconds since 1970).  If howMany is greater than 1 then this will specify the first result while subsequent results will be retrieved in reverse chronological order.  If specified as zero, then the most recent report available is assumed."
+        },
+        {
+          "name": "temperature_units",
+          "type": "string?",
+          "comment": "Optional. The units for temperature fields.  May be C, F, Celsius or Fahrenheit.  Defaults to Celsius."
+        },
+        {
+          "name": "return_nearby_weather",
+          "type": "boolean?",
+          "comment": "Optional.  Defaults to false.  If true then if the requested airport does not have a weather conditions report then the weather for the closest airport will be returned (if there is one within 30 miles)"
+        },
+        {
+          "name": "howMany",
+          "type": "int?",
+          "comment": "Optional. The maximum number of past records to obtain. Must be a positive integer value.  Defaults to 15"
+        },
+        {
+          "name": "offset",
+          "type": "int?",
+          "comment": "Optional.  This must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (most recent report).  Defaults to 0"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "WeatherConditionsArrayStruct"
+      }
+    },
+    {
+      "name": "WeatherForecast",
+      "description": "<p><b>WeatherForecast</b> returns the Weather Forecast (Terminal Area Forecast or TAF) for a given airport.  If the weather_date parameters is omitted or set to 0 then the latest forecast is returned.  To retrieve the active forecast for a specific time, pass in weather_date with the request.</p>",
+      "inputs": [
+        {
+          "name": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "name": "weather_date",
+          "type": "int?",
+          "comment": "Optional. The effective weather date in Unix epoch for the results.  If weather_date is omitted or set to 0 then the latest forecast is returned.  Use UTC/GMT timezone to convert to local timezone."
+        },
+        {
+          "name": "return_nearby_weather",
+          "type": "boolean?",
+          "comment": "Optional.  Defaults to false.  If true then if the requested airport does not have a forecast then the forecast for the closest airport will be returned (if there is one within 30 miles)"
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "WeatherForecastStruct"
+      }
+    },
+    {
+      "name": "ZipcodeInfo",
+      "description": "<b>ZipcodeInfo</b> returns information about a five-digit zipcode.  Of particular importance is latitude and longitude.",
+      "inputs": [
+        {
+          "name": "zipcode",
+          "type": "string",
+          "comment": "a five-digit U.S. Postal Service zipcode."
+        }
+      ],
+      "returns": {
+        "comment": "returned results",
+        "type": "ZipcodeInfoStruct"
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "FlightXML3:AircraftTypeRequest",
+      "fields": [
+        {
+          "field": "type",
+          "type": "string",
+          "comment": "aircraft type ID"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AircraftTypeResults",
+      "fields": [
+        {
+          "field": "AircraftTypeResult",
+          "type": "AircraftTypeStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AircraftTypeStruct",
+      "fields": [
+        {
+          "field": "description",
+          "type": "string",
+          "comment": "Textual description of the aircraft"
+        },
+        {
+          "field": "engine_count",
+          "type": "int?",
+          "comment": "The number of engines installed on the aircraft."
+        },
+        {
+          "field": "engine_type",
+          "type": "string?",
+          "comment": "Type of engine on the aircraft.  Options are \"piston\", \"turboshaft\", \"turboprop\" or \"jet\""
+        },
+        {
+          "field": "manufacturer",
+          "type": "string",
+          "comment": "Aircraft manufacturer"
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "comment": "Type of the aircraft"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineFlightSchedulesRequest",
+      "fields": [
+        {
+          "field": "airline",
+          "type": "string?",
+          "comment": "Optional airline code of the carrier.  If blank or unspecified, then flights on any airline will be returned."
+        },
+        {
+          "field": "destination",
+          "type": "string?",
+          "comment": "Optional airport code of destination.  If blank or unspecified, then flights with any destination will be returned."
+        },
+        {
+          "field": "end_date",
+          "type": "int",
+          "comment": "Timestamp of latest flight departure to return, specified in integer seconds since 1970 (UNIX epoch time). Use UTC/GMT to convert the local time at the departure airport to this timestamp."
+        },
+        {
+          "field": "exclude_codeshare",
+          "type": "boolean?",
+          "comment": "Optional flag to include codeshare flights.  Defaults to false."
+        },
+        {
+          "field": "flightno",
+          "type": "string?",
+          "comment": "Optional flight number. If blank or unspecified, then any flight number will be returned."
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of past records to obtain. Must be a positive integer value. Defaults to 15."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (most recent report)."
+        },
+        {
+          "field": "origin",
+          "type": "string?",
+          "comment": "Optional airport code of origin.  If blank or unspecified, then flights with any origin will be returned."
+        },
+        {
+          "field": "start_date",
+          "type": "int",
+          "comment": "Timestamp of earliest flight departure to return, specified in integer seconds since 1970 (UNIX epoch time). Use UTC/GMT to convert the local time at the departure airport to this timestamp."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineFlightSchedulesResults",
+      "fields": [
+        {
+          "field": "AirlineFlightSchedulesResult",
+          "type": "ArrayOfAirlineFlightScheduleStruct",
+          "comment": "Additional information about the airline flight"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineFlightScheduleStruct",
+      "fields": [
+        {
+          "field": "actual_ident",
+          "type": "string",
+          "comment": "if ident is a codeshare flight, actual_ident is the primary identifier used by the operator"
+        },
+        {
+          "field": "aircrafttype",
+          "type": "string",
+          "comment": "aircraft type ID"
+        },
+        {
+          "field": "arrivaltime",
+          "type": "int",
+          "comment": "scheduled time of arrival (seconds since 1970)"
+        },
+        {
+          "field": "departuretime",
+          "type": "int",
+          "comment": "scheduled time of departure (seconds since 1970)"
+        },
+        {
+          "field": "destination",
+          "type": "string",
+          "comment": "the destination ICAO airport ID"
+        },
+        {
+          "field": "fa_ident",
+          "type": "string?",
+          "comment": "FlightAware flight ident if available"
+        },
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "flight ident"
+        },
+        {
+          "field": "meal_service",
+          "type": "string?",
+          "comment": "Meal service offered on the flight if available"
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "comment": "the origin ICAO airport ID"
+        },
+        {
+          "field": "seats_cabin_business",
+          "type": "int?",
+          "comment": "Number of seats in the business class cabin"
+        },
+        {
+          "field": "seats_cabin_coach",
+          "type": "int?",
+          "comment": "Number of seats in the coach class cabin"
+        },
+        {
+          "field": "seats_cabin_first",
+          "type": "int?",
+          "comment": "Number of seats in the first class cabin"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineInfoRequest",
+      "fields": [
+        {
+          "field": "airline_code",
+          "type": "string",
+          "comment": "the ICAO airline ID (e.g., COA, ASA, UAL, etc.)"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineInfoResults",
+      "fields": [
+        {
+          "field": "AirlineInfoResult",
+          "type": "AirlineInfoStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirlineInfoStruct",
+      "fields": [
+        {
+          "field": "airbourne",
+          "type": "int?",
+          "comment": "Number of aircraft currently airbourne"
+        },
+        {
+          "field": "callsign",
+          "type": "string",
+          "comment": "ATC callsign for the airline"
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "comment": "Country where the airline is based"
+        },
+        {
+          "field": "flights_last_24_hours",
+          "type": "int?",
+          "comment": "Number of flights departed over the last 24 hours"
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "comment": "City and state where the airline is based if available"
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "comment": "The full name of the airline"
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "comment": "Main phone number for the airline"
+        },
+        {
+          "field": "shortname",
+          "type": "string",
+          "comment": "The common or abreviated name of the airline"
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "comment": "URL for the airline's website"
+        },
+        {
+          "field": "wiki_url",
+          "type": "string?",
+          "comment": "URL for the wikipedia page for the airline if available"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportBoardsRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "airport code"
+        },
+        {
+          "field": "filter",
+          "type": "string?",
+          "comment": "Optional.  Specify \"ga\" to show only general aviation traffic, \"airline\" to only show airline traffic.  If null/void then all types are returned.  You can also limit results to a particular airline by specifying \"airline:airlineCode\" where the airlineCode is the ICAO identifier for that airline."
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional.  Number of flights to fetch, per type.  Defaults to 15."
+        },
+        {
+          "field": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional.  Offset for query.  Defaults to 0."
+        },
+        {
+          "field": "type",
+          "type": "string?",
+          "comment": "Select one of \"arrivals\", \"departures\", \"enroute\", \"scheduled\", or \"all\". Defaults to all"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportBoardsResults",
+      "fields": [
+        {
+          "field": "AirportBoardsResult",
+          "type": "AirportBoardsStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportBoardsStruct",
+      "fields": [
+        {
+          "field": "airport",
+          "type": "string",
+          "comment": "ICAO identifier for the airport"
+        },
+        {
+          "field": "airport_info",
+          "type": "AirportStruct?",
+          "comment": "Airport information data"
+        },
+        {
+          "field": "arrivals",
+          "type": "TrackAirportStruct?",
+          "comment": "Flight arrivals information"
+        },
+        {
+          "field": "departures",
+          "type": "TrackAirportStruct?",
+          "comment": "Flight departures information"
+        },
+        {
+          "field": "enroute",
+          "type": "TrackAirportStruct?",
+          "comment": "Enroute flights information"
+        },
+        {
+          "field": "scheduled",
+          "type": "TrackAirportStruct?",
+          "comment": "Scheduled flights information"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDelayEntry",
+      "fields": [
+        {
+          "field": "airport",
+          "type": "string",
+          "comment": "icao/iata code of airport"
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "comment": "category of largest delay"
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "comment": "color of largest delay"
+        },
+        {
+          "field": "delay_secs",
+          "type": "int",
+          "comment": "duration of largest delay"
+        },
+        {
+          "field": "reasons_all",
+          "type": "AirportDelayReason()",
+          "comment": "Array of reasons for the delay"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDelayReason",
+      "fields": [
+        {
+          "field": "category",
+          "type": "string",
+          "comment": "Category for the delay (ie weather, runway)"
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "comment": "Color indicating severity of largest delay"
+        },
+        {
+          "field": "delay_secs",
+          "type": "int",
+          "comment": "Duration in seconds of the largest delay"
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "comment": "Textual description of the cause of the delay"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDelaysRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string?",
+          "comment": "Optional airport to retrieve delays for.  if blank then delays for all airports will be returned"
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return.  Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDelaysResults",
+      "fields": [
+        {
+          "field": "AirportDelaysResult",
+          "type": "AirportDelayStruct",
+          "comment": "airport-wide delays"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDelayStruct",
+      "fields": [
+        {
+          "field": "delays",
+          "type": "AirportDelayEntry()",
+          "comment": "Array of airport delay data"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportDisplayStruct",
+      "fields": [
+        {
+          "field": "airport_name",
+          "type": "string",
+          "comment": "Display friendly name for the airport"
+        },
+        {
+          "field": "alternate_ident",
+          "type": "string",
+          "comment": "Any alternate identifiers for the airport"
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "comment": "Airport location city"
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "comment": "ICAO identifier for the airport"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportInfoRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportInfoResults",
+      "fields": [
+        {
+          "field": "AirportInfoResult",
+          "type": "AirportStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:AirportStruct",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "Airport ICAO code or identifier"
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "comment": "City closest to airport"
+        },
+        {
+          "field": "country_code",
+          "type": "string?",
+          "comment": "Airport location country"
+        },
+        {
+          "field": "direction",
+          "type": "string?",
+          "comment": "Cardinal direction to Airport"
+        },
+        {
+          "field": "distance",
+          "type": "int?",
+          "comment": "Distance from specified point or airport."
+        },
+        {
+          "field": "elevation",
+          "type": "float?",
+          "comment": "Airport MSL"
+        },
+        {
+          "field": "heading",
+          "type": "int?",
+          "comment": "Compass direction to Airport"
+        },
+        {
+          "field": "latitude",
+          "type": "float",
+          "comment": "Airport location latitude"
+        },
+        {
+          "field": "longitude",
+          "type": "float",
+          "comment": "Airport location longitude"
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "comment": ""
+        },
+        {
+          "field": "state",
+          "type": "string?",
+          "comment": "Airport location state"
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "comment": "Local timezone for airport"
+        },
+        {
+          "field": "wiki_url",
+          "type": "string?",
+          "comment": "URL for the airport wikipedia page, if available."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfAirlineFlightScheduleStruct",
+      "fields": [
+        {
+          "field": "flights",
+          "type": "AirlineFlightScheduleStruct()",
+          "comment": "Array of Airline Flight Schedules"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfCountAirlineOperationsStruct",
+      "fields": [
+        {
+          "field": "data",
+          "type": "CountAirlineOperationsStruct()",
+          "comment": "Array of airline operations data"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfFlightInfoStatusStruct",
+      "fields": [
+        {
+          "field": "flights",
+          "type": "FlightInfoStatusStruct()",
+          "comment": "Array of flight information"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfFlightRouteStruct",
+      "fields": [
+        {
+          "field": "data",
+          "type": "FlightRouteStruct()",
+          "comment": "Array of route data"
+        },
+        {
+          "field": "route_distance",
+          "type": "string",
+          "comment": "Distance for the route as filed"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfRoutesBetweenAirportsStruct",
+      "fields": [
+        {
+          "field": "data",
+          "type": "RoutesBetweenAirportsStruct()",
+          "comment": "Array of route information"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ArrayOfTrackStruct",
+      "fields": [
+        {
+          "field": "tracks",
+          "type": "TrackStruct()",
+          "comment": "Array of track positions"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:BlockIdentCheckRequest",
+      "fields": [
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "requested tail number"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:BlockIdentCheckResults",
+      "fields": [
+        {
+          "field": "BlockIdentCheckResult",
+          "type": "int",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CancellationRowStruct",
+      "fields": [
+        {
+          "field": "cancellations",
+          "type": "int",
+          "comment": "the number of cancelled flights belonging to this airline/airport"
+        },
+        {
+          "field": "delays",
+          "type": "int",
+          "comment": "the number of delayed flights belonging to this airline/airport"
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "comment": "human displayable string. for airlines, the name of the airline.  for origin/destination, the name of the airport."
+        },
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "for airlines, the icao/iata airline code.  for origin/destination, the icao/iata airport code."
+        },
+        {
+          "field": "total",
+          "type": "int",
+          "comment": "the total number of originally scheduled flights belonging to this airline/airport"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CancellationSummaryStruct",
+      "fields": [
+        {
+          "field": "matching",
+          "type": "CancellationRowStruct()",
+          "comment": "Array of cancellation data"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        },
+        {
+          "field": "total_cancellations_national",
+          "type": "int",
+          "comment": "total flight cancellations within the United States"
+        },
+        {
+          "field": "total_cancellations_worldwide",
+          "type": "int",
+          "comment": "total flight cancellations"
+        },
+        {
+          "field": "total_delays_worldwide",
+          "type": "int",
+          "comment": "total flight delays"
+        },
+        {
+          "field": "type_matching",
+          "type": "string",
+          "comment": "indicates either 'airline', 'origin', 'destination'"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CountAirlineOperationsStruct",
+      "fields": [
+        {
+          "field": "enroute",
+          "type": "int",
+          "comment": "Number of flights currently enroute"
+        },
+        {
+          "field": "icao",
+          "type": "string",
+          "comment": "ICAO identifier for the airline"
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "comment": "Full name of the airline"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CountAirportOperationsRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CountAirportOperationsResults",
+      "fields": [
+        {
+          "field": "CountAirportOperationsResult",
+          "type": "CountAirportOperationsStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CountAirportOperationsStruct",
+      "fields": [
+        {
+          "field": "departed",
+          "type": "int",
+          "comment": "Number of flight that have departed the airport and are currently airborne"
+        },
+        {
+          "field": "enroute",
+          "type": "int",
+          "comment": "Number of flights enroute to the airport"
+        },
+        {
+          "field": "scheduled_arrivals",
+          "type": "int",
+          "comment": "Scheduled arrivals for the airport"
+        },
+        {
+          "field": "scheduled_departures",
+          "type": "int",
+          "comment": "Scheduled departures for the airport"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:CountAllEnrouteAirlineOperationsRequest",
+      "fields": []
+    },
+    {
+      "name": "FlightXML3:CountAllEnrouteAirlineOperationsResults",
+      "fields": [
+        {
+          "field": "CountAllEnrouteAirlineOperationsResult",
+          "type": "ArrayOfCountAirlineOperationsStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:DecodedForecastStruct",
+      "fields": [
+        {
+          "field": "forecast_end",
+          "type": "int",
+          "comment": "End of the effective period for this forecast"
+        },
+        {
+          "field": "forecast_lines",
+          "type": "ForecastLineStruct()",
+          "comment": "Array of decoded forecast periods"
+        },
+        {
+          "field": "forecast_start",
+          "type": "int",
+          "comment": "Start of the effective period for this forecast"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:DecodeFlightRouteRequest",
+      "fields": [
+        {
+          "field": "faFlightID",
+          "type": "string",
+          "comment": "unique identifier assigned by FlightAware for the desired flight (or use \"ident@departureTime\")"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:DecodeFlightRouteResults",
+      "fields": [
+        {
+          "field": "DecodeFlightRouteResult",
+          "type": "ArrayOfFlightRouteStruct",
+          "comment": "returned list of route points"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:DecodeRouteRequest",
+      "fields": [
+        {
+          "field": "destination",
+          "type": "string",
+          "comment": "Destination airport code"
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "comment": "Origin airport code"
+        },
+        {
+          "field": "route",
+          "type": "string",
+          "comment": "Space separated list of intersections and/or VORs along the route (e.g. WYLSN MONNT KLJOY MAJKK REDDN4)"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:DecodeRouteResults",
+      "fields": [
+        {
+          "field": "DecodeRouteResult",
+          "type": "ArrayOfFlightRouteStruct",
+          "comment": "returned list of route points"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FindFlightMatch",
+      "fields": [
+        {
+          "field": "num_segments",
+          "type": "int",
+          "comment": "The number of flight segments for the flight"
+        },
+        {
+          "field": "segments",
+          "type": "FlightInfoStatusStruct()",
+          "comment": "Array of flight segment data"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FindFlightRequest",
+      "fields": [
+        {
+          "field": "destination",
+          "type": "string",
+          "comment": "Airport of destination"
+        },
+        {
+          "field": "filter",
+          "type": "string?",
+          "comment": "Optional filter restrictions (all, ga, airline). Default is all."
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of results to return.  Must be a positive integer. Default is 15."
+        },
+        {
+          "field": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "comment": "Airport of origin"
+        },
+        {
+          "field": "type",
+          "type": "string?",
+          "comment": "Optional type of search (auto, nonstop, onestop). Default is auto."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FindFlightResults",
+      "fields": [
+        {
+          "field": "FindFlightResult",
+          "type": "FindFlightStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FindFlightStruct",
+      "fields": [
+        {
+          "field": "flights",
+          "type": "FindFlightMatch()",
+          "comment": "Array of matching flight data"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        },
+        {
+          "field": "num_flights",
+          "type": "int",
+          "comment": "Number of flights found matching the origin/destination criteria"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightCancellationStatisticsRequest",
+      "fields": [
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return, ordered by highest to lowest. Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "field": "ident_filter",
+          "type": "string?",
+          "comment": "this argument can be blank/unspecified to request that all results are returned.  Otherwise, when type_matching is 'airline', this argument can be the specific airline you are interested in.  When type_matching is 'origin' or 'destination', this argument can be the specific airport you are interested in."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        },
+        {
+          "field": "time_period",
+          "type": "string",
+          "comment": "specifies which day to analyze.  (must be 'yesterday', 'today', 'tomorrow', 'plus2days', 'twoDaysAgo', 'minus2plus12hrs', 'next36hrs', 'week')"
+        },
+        {
+          "field": "type_matching",
+          "type": "string",
+          "comment": "the aggregation criteria.  (must be 'airline', 'origin', or 'destination')"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightCancellationStatisticsResults",
+      "fields": [
+        {
+          "field": "FlightCancellationStatisticsResult",
+          "type": "CancellationSummaryStruct",
+          "comment": "returned list of cancelled flight statistics"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightInfoStatusRequest",
+      "fields": [
+        {
+          "field": "filter",
+          "type": "string?",
+          "comment": "Optional results filter.  This filter will be available in the future and will utilize ODate logical operators to filter results."
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional maximum number of past flights to obtain. Must be a positive integer value. Defaults to 15."
+        },
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "requested tail number, ident, atc_ident, or faFlightID"
+        },
+        {
+          "field": "include_ex_data",
+          "type": "boolean?",
+          "comment": "Optional.  Set to true or 1 to receive extended flight information. Defaults to false."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightInfoStatusResults",
+      "fields": [
+        {
+          "field": "FlightInfoStatusResult",
+          "type": "ArrayOfFlightInfoStatusStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightInfoStatusStruct",
+      "fields": [
+        {
+          "field": "actual_arrival_time",
+          "type": "Timestamp?",
+          "comment": "Runway actual arrival time"
+        },
+        {
+          "field": "actual_blockin_time",
+          "type": "Timestamp?",
+          "comment": "Actual gate arrival time"
+        },
+        {
+          "field": "actual_blockout_time",
+          "type": "Timestamp?",
+          "comment": "Actual gate departure time"
+        },
+        {
+          "field": "actual_departure_time",
+          "type": "Timestamp?",
+          "comment": "Runway actual departure time"
+        },
+        {
+          "field": "adhoc",
+          "type": "boolean",
+          "comment": "Indicates if the flight is adhoc (no flight plan information available)"
+        },
+        {
+          "field": "aircrafttype",
+          "type": "string?",
+          "comment": "Aircraft type, ie. B727, C172"
+        },
+        {
+          "field": "airline",
+          "type": "string?",
+          "comment": "Airline code (ICAO) extracted from the ident"
+        },
+        {
+          "field": "arrival_delay",
+          "type": "int?",
+          "comment": "Arrival delay (in seconds) based on either actual or estimated gate arrival time.  If gate time is unavailable then based on runway arrival time.  A negative value indicates the flight is early."
+        },
+        {
+          "field": "bag_claim",
+          "type": "string?",
+          "comment": "Baggage claim location at the destinationi airport, if known"
+        },
+        {
+          "field": "blocked",
+          "type": "boolean",
+          "comment": "Indicates if the flight is blocked from public viewing"
+        },
+        {
+          "field": "cancelled",
+          "type": "boolean",
+          "comment": "Indicates if the flight was cancelled"
+        },
+        {
+          "field": "codeshares",
+          "type": "string?",
+          "comment": "Comma separated list of any codeshares operating on this flight."
+        },
+        {
+          "field": "datalink",
+          "type": "boolean?",
+          "comment": ""
+        },
+        {
+          "field": "departure_delay",
+          "type": "int?",
+          "comment": "Departure delay (in seconds) based on either actual or estimated gate departure time.  If gate time is unavailable then based on runway departure time.  A negative value indiates the flight is early."
+        },
+        {
+          "field": "destination",
+          "type": "AirportDisplayStruct?",
+          "comment": "Destination airport code, Lat/Lon location, final Navaid, or blank"
+        },
+        {
+          "field": "display_aircrafttype",
+          "type": "string?",
+          "comment": "Friendly string representation of the aircraft type"
+        },
+        {
+          "field": "display_filed_altitude",
+          "type": "string?",
+          "comment": "Display friendly string for the filed altitude"
+        },
+        {
+          "field": "distance_filed",
+          "type": "int?",
+          "comment": "Distance based on the filed route.  May vary from the actual distance flown"
+        },
+        {
+          "field": "diverted",
+          "type": "boolean",
+          "comment": "Indicates if the flight diverted"
+        },
+        {
+          "field": "estimated_arrival_time",
+          "type": "Timestamp?",
+          "comment": "Runway estimated arrival time"
+        },
+        {
+          "field": "estimated_blockin_time",
+          "type": "Timestamp?",
+          "comment": "Estimated gate arrival time"
+        },
+        {
+          "field": "estimated_blockout_time",
+          "type": "Timestamp?",
+          "comment": "Estimated gate departure time"
+        },
+        {
+          "field": "estimated_departure_time",
+          "type": "Timestamp?",
+          "comment": "Runway estimated departure time"
+        },
+        {
+          "field": "faFlightID",
+          "type": "string",
+          "comment": "Unique identifier assigned by FlightAware for this specific flight"
+        },
+        {
+          "field": "filed_airspeed_kts",
+          "type": "int?",
+          "comment": "Filed IFR airspeed in knots"
+        },
+        {
+          "field": "filed_airspeed_mach",
+          "type": "int?",
+          "comment": "Filed IFR airspeed in mach number"
+        },
+        {
+          "field": "filed_altitude",
+          "type": "int?",
+          "comment": "Filed IFR altitude"
+        },
+        {
+          "field": "filed_arrival_time",
+          "type": "Timestamp?",
+          "comment": "Runway filed arrival time"
+        },
+        {
+          "field": "filed_blockin_time",
+          "type": "Timestamp?",
+          "comment": "Scheduled gate arrival time"
+        },
+        {
+          "field": "filed_blockout_time",
+          "type": "Timestamp?",
+          "comment": "Scheduled gate departure time"
+        },
+        {
+          "field": "filed_departure_time",
+          "type": "Timestamp?",
+          "comment": "Runway filed departure time"
+        },
+        {
+          "field": "filed_ete",
+          "type": "int?",
+          "comment": "Runway-to-runway filed duration (seconds)"
+        },
+        {
+          "field": "flightnumber",
+          "type": "string?",
+          "comment": "Flight number extracted from the ident"
+        },
+        {
+          "field": "full_aircrafttype",
+          "type": "string?",
+          "comment": "Full aircraft type including any suffic and prefix"
+        },
+        {
+          "field": "gate_dest",
+          "type": "string?",
+          "comment": "Gate at the destination airport, if known"
+        },
+        {
+          "field": "gate_orig",
+          "type": "string?",
+          "comment": "Gate at the origin airport, if known"
+        },
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "Identifier of the flight"
+        },
+        {
+          "field": "inbound_faFlightID",
+          "type": "string?",
+          "comment": "Unique identifier assigned by FlightAware of the previous flight of the aircraft serving this flight, if known"
+        },
+        {
+          "field": "origin",
+          "type": "AirportDisplayStruct?",
+          "comment": "Origin airport code, Lat/Lon location, initial Navaid, or otherwise"
+        },
+        {
+          "field": "progress_percent",
+          "type": "int?",
+          "comment": "Progress bar indicator (0-100), or -1 if not yet departed or unknown"
+        },
+        {
+          "field": "route",
+          "type": "string?",
+          "comment": "Filed IFR route for the flight"
+        },
+        {
+          "field": "seats_cabin_business",
+          "type": "int?",
+          "comment": "Number of seats in the business class cabin"
+        },
+        {
+          "field": "seats_cabin_coach",
+          "type": "int?",
+          "comment": "Number of seats in the coach class cabin"
+        },
+        {
+          "field": "seats_cabin_first",
+          "type": "int?",
+          "comment": "Number of seats in the first class cabin"
+        },
+        {
+          "field": "status",
+          "type": "string?",
+          "comment": "Human readable summary of flight status"
+        },
+        {
+          "field": "tailnumber",
+          "type": "string?",
+          "comment": "Tail number for the aircraft"
+        },
+        {
+          "field": "terminal_dest",
+          "type": "string?",
+          "comment": "Terminal at the destination airport, if known"
+        },
+        {
+          "field": "terminal_orig",
+          "type": "string?",
+          "comment": "Terminal at the origin airport, if known"
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "comment": "General_Aviation or Form_Airline"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:FlightRouteStruct",
+      "fields": [
+        {
+          "field": "distance_from_origin",
+          "type": "float?",
+          "comment": "Distance from origin airport"
+        },
+        {
+          "field": "distance_this_leg",
+          "type": "float?",
+          "comment": "Distance from the last point on Route"
+        },
+        {
+          "field": "distance_to_destination",
+          "type": "float?",
+          "comment": "Distance to destination airport"
+        },
+        {
+          "field": "latitude",
+          "type": "float?",
+          "comment": "Latitude of the fix"
+        },
+        {
+          "field": "longitude",
+          "type": "float?",
+          "comment": "Longitude of the fix"
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "comment": "Name of the route fix"
+        },
+        {
+          "field": "outbound_course",
+          "type": "float?",
+          "comment": "Course from the current point to the next"
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "comment": "Type of the fix (ie Waypoint / Reporting Point)"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ForecastCloudsStruct",
+      "fields": [
+        {
+          "field": "altitude",
+          "type": "string?",
+          "comment": "Height (AGL) of cloud layer base"
+        },
+        {
+          "field": "coverage",
+          "type": "string?",
+          "comment": "Area of sky covered by the cloud layer (FEW 0-2 octas, SCT 3-4 octas, BKN 5-7 octas, OVC 8 octas"
+        },
+        {
+          "field": "special",
+          "type": "string?",
+          "comment": "Any special modifiers such as CB (cumulonimbus) or TCU (towering cumulonimbus"
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "comment": "Raw TAF cloud symbol"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ForecastLineStruct",
+      "fields": [
+        {
+          "field": "barometric",
+          "type": "string?",
+          "comment": "Optional. Forecast pressure"
+        },
+        {
+          "field": "clouds",
+          "type": "ForecastCloudsStruct()?",
+          "comment": "Optional. Sky condition forecasts"
+        },
+        {
+          "field": "forecast_line_end",
+          "type": "int",
+          "comment": "End of the effective period for this forecast line"
+        },
+        {
+          "field": "forecast_line_start",
+          "type": "int",
+          "comment": "Start of the effective period for this forecast line"
+        },
+        {
+          "field": "forecast_line_type",
+          "type": "string",
+          "comment": "The type of forecast line (forecast, from, temporary, becoming"
+        },
+        {
+          "field": "icing_layers",
+          "type": "string?",
+          "comment": "Optional. Icing forecast"
+        },
+        {
+          "field": "significant_weather",
+          "type": "string?",
+          "comment": "Optional. Significant Weather forecast"
+        },
+        {
+          "field": "turbulence_layers",
+          "type": "string?",
+          "comment": "Optional. Turbulence forecast"
+        },
+        {
+          "field": "visibility",
+          "type": "ForecastVisibilityStruct?",
+          "comment": "Optional. Visibility forecast"
+        },
+        {
+          "field": "winds",
+          "type": "ForecastWindStruct?",
+          "comment": "Optional. Wind forecast"
+        },
+        {
+          "field": "windshear",
+          "type": "ForecastWindshear?",
+          "comment": "Optional. Windshear forecast"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ForecastVisibilityStruct",
+      "fields": [
+        {
+          "field": "symbol",
+          "type": "string",
+          "comment": "Raw TAF visibility symbol"
+        },
+        {
+          "field": "units",
+          "type": "string?",
+          "comment": "Visibility units"
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "comment": "Numeric visibility"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ForecastWindshear",
+      "fields": [
+        {
+          "field": "direction",
+          "type": "string",
+          "comment": "Wind direction of windshear"
+        },
+        {
+          "field": "height",
+          "type": "string",
+          "comment": "Altitude of low level wind shear occurance"
+        },
+        {
+          "field": "speed",
+          "type": "string?",
+          "comment": "Wind speed of windshear"
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "comment": "Raw TAF windshear symbol"
+        },
+        {
+          "field": "units",
+          "type": "string?",
+          "comment": "Wind units of windshear"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ForecastWindStruct",
+      "fields": [
+        {
+          "field": "direction",
+          "type": "string",
+          "comment": "Wind direction"
+        },
+        {
+          "field": "peak_gusts",
+          "type": "int?",
+          "comment": "Optional. Peak gusts for forecast."
+        },
+        {
+          "field": "speed",
+          "type": "int",
+          "comment": "Wind speed"
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "comment": "Raw TAF wind symbol"
+        },
+        {
+          "field": "units",
+          "type": "string?",
+          "comment": "Optional. Wind units."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:GetFlightTrackRequest",
+      "fields": [
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "requested flight id (either a FlightAware flight id (e.g. SWA35-1491974780-airline-0046) or an ident with departure time (e.g. SWA35@1492200000))"
+        },
+        {
+          "field": "include_position_estimates",
+          "type": "boolean?",
+          "comment": "Optional - false by default.  Set to true to return estimated positions in the track."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:GetFlightTrackResults",
+      "fields": [
+        {
+          "field": "GetFlightTrackResult",
+          "type": "ArrayOfTrackStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:LatLongsToDistanceRequest",
+      "fields": [
+        {
+          "field": "lat1",
+          "type": "float",
+          "comment": "Latitude of point 1"
+        },
+        {
+          "field": "lat2",
+          "type": "float",
+          "comment": "Latitude of point 2"
+        },
+        {
+          "field": "lon1",
+          "type": "float",
+          "comment": "Longitude of point 1"
+        },
+        {
+          "field": "lon2",
+          "type": "float",
+          "comment": "Longitude of point 2"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:LatLongsToDistanceResults",
+      "fields": [
+        {
+          "field": "LatLongsToDistanceResult",
+          "type": "int",
+          "comment": "returned distance"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:LatLongsToHeadingRequest",
+      "fields": [
+        {
+          "field": "lat1",
+          "type": "float",
+          "comment": "Latitude of point 1"
+        },
+        {
+          "field": "lat2",
+          "type": "float",
+          "comment": "Latitude of point 2"
+        },
+        {
+          "field": "lon1",
+          "type": "float",
+          "comment": "Longitude of point 1"
+        },
+        {
+          "field": "lon2",
+          "type": "float",
+          "comment": "Longitude of point 2"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:LatLongsToHeadingResults",
+      "fields": [
+        {
+          "field": "LatLongsToHeadingResult",
+          "type": "int",
+          "comment": "returned heading"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:NearbyAirportsRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string?",
+          "comment": "The airport code to search near"
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of aggregated rows to return. Must be a positive integer.  Defaults to 15."
+        },
+        {
+          "field": "latitude",
+          "type": "float?",
+          "comment": "The latitude of the point to search near."
+        },
+        {
+          "field": "longitude",
+          "type": "float?",
+          "comment": "The longitude of the point to search near."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (closest airports)."
+        },
+        {
+          "field": "only_iap",
+          "type": "boolean?",
+          "comment": "Optional. Return only airports with Instrument Approaches (also limits results to North America)"
+        },
+        {
+          "field": "radius",
+          "type": "int",
+          "comment": "The search radius to use for finding nearby airports in statute miles."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:NearbyAirportsResults",
+      "fields": [
+        {
+          "field": "NearbyAirportsResult",
+          "type": "NearbyAirportsStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:NearbyAirportsStruct",
+      "fields": [
+        {
+          "field": "airports",
+          "type": "AirportStruct()",
+          "comment": "Array of Airport info"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:RoutesBetweenAirportsRequest",
+      "fields": [
+        {
+          "field": "destination",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional. Maximum number of past flights to obtain. Must be a positive integer value less. Defaults to 15."
+        },
+        {
+          "field": "max_file_age",
+          "type": "string",
+          "comment": "maximum filed plan age of flights to consider.  Can be a value less than or equal to 14 days (2 weeks) OR 1 month OR 1 year (for example: \"6 days\" or \"1 month\" or \"1 year\").  This should generally be longer than maxDepartureAge."
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional. Must be an integer value of the offset row count you want the search to start at. Most requests should be 0."
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "field": "sort_by",
+          "type": "string",
+          "comment": "Optional. Sort column for results.  Valid options are \"count\" (default) or \"last_departuretime\".  The \"count\" option will sort results by the route filing count in descening order.  The \"last_departuretime\" option will sort results by the latest filed departuretime for that route in descending order (newest first).  Any invalid value will result in sorting by count descending."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:RoutesBetweenAirportsResults",
+      "fields": [
+        {
+          "field": "RoutesBetweenAirportsResult",
+          "type": "ArrayOfRoutesBetweenAirportsStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:RoutesBetweenAirportsStruct",
+      "fields": [
+        {
+          "field": "aircrafttypes",
+          "type": "string",
+          "comment": "List of aircraft types that have filed this route"
+        },
+        {
+          "field": "count",
+          "type": "int",
+          "comment": "The number of flights with this filed route"
+        },
+        {
+          "field": "filed_altitude_max",
+          "type": "int",
+          "comment": "The highest altitude filed for the route"
+        },
+        {
+          "field": "filed_altitude_min",
+          "type": "int",
+          "comment": "The lowest altitude filed for the route"
+        },
+        {
+          "field": "last_departuretime",
+          "type": "int",
+          "comment": "The latest departuretime for a flight operating on this route"
+        },
+        {
+          "field": "route",
+          "type": "string",
+          "comment": "The IFR route assigned"
+        },
+        {
+          "field": "route_distance",
+          "type": "string?",
+          "comment": "The distance as filed for the route.  May vary from the actual distance flown"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:TailOwnerRequest",
+      "fields": [
+        {
+          "field": "ident",
+          "type": "string",
+          "comment": "requested tail number"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:TailOwnerResults",
+      "fields": [
+        {
+          "field": "TailOwnerResult",
+          "type": "TailOwnerStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:TailOwnerStruct",
+      "fields": [
+        {
+          "field": "location",
+          "type": "string",
+          "comment": "City and state of the registered owner"
+        },
+        {
+          "field": "location2",
+          "type": "string",
+          "comment": "Street address of the registered owner"
+        },
+        {
+          "field": "owner",
+          "type": "string",
+          "comment": "Registered owner of the aircraft"
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "comment": "Website for the owner if available"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:Timestamp",
+      "fields": [
+        {
+          "field": "date",
+          "type": "string?",
+          "comment": "localized string for the date"
+        },
+        {
+          "field": "dow",
+          "type": "string?",
+          "comment": "localized name for the day of week"
+        },
+        {
+          "field": "epoch",
+          "type": "int",
+          "comment": "UNIX epoch seconds since January 1, 1970 UTC"
+        },
+        {
+          "field": "localtime",
+          "type": "int?",
+          "comment": "seconds since January 1, 1970 in local timezone"
+        },
+        {
+          "field": "time",
+          "type": "string?",
+          "comment": "localized string for the time of day"
+        },
+        {
+          "field": "tz",
+          "type": "string?",
+          "comment": "IANA tzdata style timezone name"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:TrackAirportStruct",
+      "fields": [
+        {
+          "field": "flights",
+          "type": "FlightInfoStatusStruct()?",
+          "comment": "Array of flight information"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        },
+        {
+          "field": "num_flights",
+          "type": "int",
+          "comment": "Number of flights on this page of the response"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:TrackStruct",
+      "fields": [
+        {
+          "field": "altitude",
+          "type": "int",
+          "comment": "The aircraft altitude at time of position update"
+        },
+        {
+          "field": "altitude_change",
+          "type": "string",
+          "comment": "Indicates if the aircraft is climbing (C) or descending (D)"
+        },
+        {
+          "field": "altitude_status",
+          "type": "string",
+          "comment": "C indicates the aircraft is 200 feet off its ATC assigned altitude"
+        },
+        {
+          "field": "groundspeed",
+          "type": "int",
+          "comment": "The aircraft groundspeed at time of position update"
+        },
+        {
+          "field": "latitude",
+          "type": "float",
+          "comment": "The latitude for the position update"
+        },
+        {
+          "field": "longitude",
+          "type": "float",
+          "comment": "The longitude for the position update"
+        },
+        {
+          "field": "timestamp",
+          "type": "int",
+          "comment": "The timestamp for the position update"
+        },
+        {
+          "field": "update_type",
+          "type": "string",
+          "comment": "TP=projected, TO=oceanic, TZ=radar, TA=broadcast, TM=multilateration, TD=datalink, TX=surface, TS=space-based"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherConditionsArrayStruct",
+      "fields": [
+        {
+          "field": "conditions",
+          "type": "WeatherConditionsStruct()",
+          "comment": "Array of weather conditions"
+        },
+        {
+          "field": "next_offset",
+          "type": "int",
+          "comment": "Offset parameter to pass into request to get the next page"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherConditionsCloudStruct",
+      "fields": [
+        {
+          "field": "altitude",
+          "type": "int?",
+          "comment": "Height in feet of cloud base"
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "comment": "Raw cloud symbol from the METAR report"
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "comment": "Type of cloud.  May be CLR, FEW, SCT, BKN, OVC, VV"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherConditionsRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "field": "howMany",
+          "type": "int?",
+          "comment": "Optional. The maximum number of past records to obtain. Must be a positive integer value.  Defaults to 15"
+        },
+        {
+          "field": "offset",
+          "type": "int?",
+          "comment": "Optional.  This must be an integer value of the offset row count you want the search to start at. Most requests should be 0 (most recent report).  Defaults to 0"
+        },
+        {
+          "field": "return_nearby_weather",
+          "type": "boolean?",
+          "comment": "Optional.  Defaults to false.  If true then if the requested airport does not have a weather conditions report then the weather for the closest airport will be returned (if there is one within 30 miles)"
+        },
+        {
+          "field": "temperature_units",
+          "type": "string?",
+          "comment": "Optional. The units for temperature fields.  May be C, F, Celsius or Fahrenheit.  Defaults to Celsius."
+        },
+        {
+          "field": "weather_date",
+          "type": "int?",
+          "comment": "Optional. The active time for the METAR  reports (in seconds since 1970).  If howMany is greater than 1 then this will specify the first result while subsequent results will be retrieved in reverse chronological order.  If specified as zero, then the most recent report available is assumed."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherConditionsResults",
+      "fields": [
+        {
+          "field": "WeatherConditionsResult",
+          "type": "WeatherConditionsArrayStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherConditionsStruct",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport code of the report"
+        },
+        {
+          "field": "cloud_friendly",
+          "type": "string",
+          "comment": "human-friendly summary of clouds (e.g. Overcast skies, Clear skies, Raining, Snowing, etc.)"
+        },
+        {
+          "field": "clouds",
+          "type": "WeatherConditionsCloudStruct()?",
+          "comment": "Array of cloud data"
+        },
+        {
+          "field": "conditions",
+          "type": "string",
+          "comment": "notable weather (e.g. BR, FG, RA)"
+        },
+        {
+          "field": "pressure",
+          "type": "float",
+          "comment": "air pressure"
+        },
+        {
+          "field": "pressure_units",
+          "type": "string",
+          "comment": "units for air pressure"
+        },
+        {
+          "field": "raw_data",
+          "type": "string",
+          "comment": "raw METAR report string"
+        },
+        {
+          "field": "temp_air",
+          "type": "int",
+          "comment": "air temperature (Celsius)"
+        },
+        {
+          "field": "temp_dewpoint",
+          "type": "int",
+          "comment": "dewpoint temperature (Celsius)"
+        },
+        {
+          "field": "temp_perceived",
+          "type": "string",
+          "comment": "perceived temperature (e.g. wind chill)"
+        },
+        {
+          "field": "temp_relhum",
+          "type": "int",
+          "comment": "relative humidity (percent)"
+        },
+        {
+          "field": "time",
+          "type": "int",
+          "comment": "timestamp of report (in seconds since 1970)"
+        },
+        {
+          "field": "visibility",
+          "type": "float",
+          "comment": "visibility"
+        },
+        {
+          "field": "visibility_units",
+          "type": "string",
+          "comment": "units for visibility"
+        },
+        {
+          "field": "wind_direction",
+          "type": "int",
+          "comment": "heading direction of wind (degrees)"
+        },
+        {
+          "field": "wind_friendly",
+          "type": "string",
+          "comment": "human-friendly summary of winds (e.g. Very windy, Calm, etc.)"
+        },
+        {
+          "field": "wind_speed",
+          "type": "int",
+          "comment": "wind speed"
+        },
+        {
+          "field": "wind_speed_gust",
+          "type": "int",
+          "comment": "wind gust speed"
+        },
+        {
+          "field": "wind_units",
+          "type": "string",
+          "comment": "units for the wind speed and wind gusts"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherForecastRequest",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "the ICAO airport ID (e.g., KLAX, KSFO, KIAH, KHOU, KJFK, KEWR, KORD, KATL, etc.)"
+        },
+        {
+          "field": "return_nearby_weather",
+          "type": "boolean?",
+          "comment": "Optional.  Defaults to false.  If true then if the requested airport does not have a forecast then the forecast for the closest airport will be returned (if there is one within 30 miles)"
+        },
+        {
+          "field": "weather_date",
+          "type": "int?",
+          "comment": "Optional. The effective weather date in Unix epoch for the results.  If weather_date is omitted or set to 0 then the latest forecast is returned.  Use UTC/GMT timezone to convert to local timezone."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherForecastResults",
+      "fields": [
+        {
+          "field": "WeatherForecastResult",
+          "type": "WeatherForecastStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:WeatherForecastStruct",
+      "fields": [
+        {
+          "field": "airport_code",
+          "type": "string",
+          "comment": "ICAO code for the desired airport forecast"
+        },
+        {
+          "field": "decoded_forecast",
+          "type": "DecodedForecastStruct?",
+          "comment": "Decoded forecast structure"
+        },
+        {
+          "field": "raw_forecast",
+          "type": "string()",
+          "comment": "String array containing the raw forecast lines from the TAF"
+        },
+        {
+          "field": "timestring",
+          "type": "string",
+          "comment": "Date and time the forecast was generated"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ZipcodeInfoRequest",
+      "fields": [
+        {
+          "field": "zipcode",
+          "type": "string",
+          "comment": "a five-digit U.S. Postal Service zipcode."
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ZipcodeInfoResults",
+      "fields": [
+        {
+          "field": "ZipcodeInfoResult",
+          "type": "ZipcodeInfoStruct",
+          "comment": "returned results"
+        }
+      ]
+    },
+    {
+      "name": "FlightXML3:ZipcodeInfoStruct",
+      "fields": [
+        {
+          "field": "city",
+          "type": "string",
+          "comment": "Main city of the zipcode"
+        },
+        {
+          "field": "county",
+          "type": "string",
+          "comment": "Country of the zipcode"
+        },
+        {
+          "field": "latitude",
+          "type": "float",
+          "comment": "Latitude of the zipcode"
+        },
+        {
+          "field": "longitude",
+          "type": "float",
+          "comment": "Longitude of the zipcode"
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "comment": "State of the zipcode"
+        }
+      ]
+    }
+  ]
+}
