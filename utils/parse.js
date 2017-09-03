@@ -3,10 +3,6 @@ const json = require('../server/flight-aware.schema.json');
 
 let interfaceCode = '';
 let functionsCode = 'import * as rp from \'request-promise\';\n\n' +
-    'const username = \'HodBauer\';\n' +
-    'const apiKey = \'402a9d36507f014a110c668befb9d8e363f76546\';\n' +
-    'const fxmlUrl = `https://${username}:${apiKey}@flightxml.flightaware.com/json/FlightXML3/`;\n' +
-    '\n' +
     'let base = {\n' +
     '    uri: \'\',\n' +
     '    qs: {},\n' +
@@ -15,7 +11,7 @@ let functionsCode = 'import * as rp from \'request-promise\';\n\n' +
 
 const types = arrayToObject(json.types, 'name', /^FlightXML3:(.*)/);
 const operations = arrayToObject(json.operations, 'name');
-
+let schemaTypes = {};
 let schemaCode = 'import {buildSchema} from \'graphql\';\n\n' +
     'export const schema = buildSchema(`\n';
 let queryCode = 'type FlightAware {\n';
@@ -24,22 +20,29 @@ for (let key of Object.keys(operations)) {
 
     interfaceCode += createInterfaces(operation.inputs, 'name', key);
     functionsCode += createFunctions(operation, types[key + 'Results'].fields[0]);
-    let x = createSchemaType(operation);
-    schemaCode += x.type;
+    let x = createSchemaType(operation, operation.returns.type);
+    const operationType = operation.returns.type;
+    let structureName = getStructureName(operationType);
+    schemaTypes[structureName] = x.type;
     queryCode += x.query;
 }
-queryCode += `}\n\ntype Query {\n    flightAware:FlightAware\n}`
-schemaCode += queryCode + '`);\n';
 
 for (let key of Object.keys(types)) {
     let type = types[key];
     interfaceCode += createInterfaces(type.fields, 'field', key);
+    let x = createSchemaType(type, key);
+    schemaTypes[key] = x.type;
 }
 
+for (let key of Object.keys(schemaTypes).sort()) {
+    schemaCode += schemaTypes[key];
+}
+queryCode += `}\n\ntype Query {\n    flightAware:FlightAware\n}`;
+schemaCode += queryCode + '`);\n';
 
-fs.writeFile('./src/flight-aware.interface.ts', interfaceCode);
-fs.writeFile('./src/flight-aware.api.ts', functionsCode);
-fs.writeFile('./src/flight-aware.schema.ts', schemaCode);
+fs.writeFile('./server/flight-aware.interface.ts', interfaceCode);
+fs.writeFile('./server/flight-aware.api.ts', functionsCode);
+fs.writeFile('./server/flight-aware.schema.ts', schemaCode);
 
 function createInterfaces(inputs, key, name) {
     let result = `export interface ${name} {\n`;
@@ -84,18 +87,26 @@ function createFunctions(input, resultType) {
     return result;
 }
 
-function createSchemaType(operation) {
-    let structure = getStructure(operation.returns.type);
+function createSchemaType(operation, operationType) {
+    let structure = getStructure(operationType);
+    let structureName = getStructureName(operationType);
 
-    let query = `    ${operation.name}(`;
-    query += operation.inputs.map(input => `${input.name}:${parseSchemaType(input.type)}`).join(', ');
-    query += `):${getStructureName(operation.returns.type)}\n`;
+    let query = '';
+    if (operation.inputs) {
+        query += `    ${operation.name}`;
+        if (operation.inputs.length) {
+            query += `(`;
+            query += operation.inputs.map(input => `${input.name}:${parseSchemaType(input.type)}`).join(', ');
+            query += `)`;
+        }
+        query += `:${structureName}\n`;
+    }
 
     let type = '';
-    if (getStructureName(operation.returns.type) !== 'Int') {
-        type = `type ${getStructureName(operation.returns.type)} {\n`;
+    if (structureName !== 'Int' && structure.fields.length) {
+        type = `type ${structureName} {\n`;
         type += structure.fields.map(field => `    ${field.field}:${parseSchemaType(field.type)}`).join('\n');
-        type += `}\n\n`;
+        type += `\n}\n\n`;
     }
 
     return {query, type};
